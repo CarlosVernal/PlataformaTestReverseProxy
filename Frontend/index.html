@@ -15,14 +15,73 @@
       color: #172033;
     }
 
+    main {
+      display: grid;
+      gap: 1rem;
+      justify-items: center;
+      padding: 2rem;
+    }
+
     h1 {
       margin: 0;
       font-size: clamp(2rem, 8vw, 5rem);
       text-align: center;
     }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      background: #1769aa;
+      color: white;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    pre {
+      min-width: min(32rem, calc(100vw - 2rem));
+      margin: 0;
+      padding: 1rem;
+      border-radius: 6px;
+      background: white;
+      box-shadow: 0 8px 24px rgb(23 32 51 / 10%);
+      overflow: auto;
+    }
   </style>
 </head>
 <body>
-  <h1>Hola mundo</h1>
+  <main>
+    <h1>Hola mundo</h1>
+    <div class="actions">
+      <button type="button" onclick="pingApi('/api/ping')">API por proxy</button>
+      <button type="button" onclick="pingApi('direct')">API directa</button>
+    </div>
+    <pre id="resultado">Sin respuesta aun</pre>
+  </main>
+
+  <script>
+    function getDirectBackendUrl() {
+      return `${window.location.protocol}//${window.location.hostname}:8010/ping`;
+    }
+
+    async function pingApi(target) {
+      const url = target === 'direct' ? getDirectBackendUrl() : target;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      document.getElementById('resultado').textContent = JSON.stringify({
+        url,
+        status: response.status,
+        data
+      }, null, 2);
+    }
+  </script>
 </body>
 </html>
